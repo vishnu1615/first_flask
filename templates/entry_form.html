@@ -1,23 +1,28 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>This Is Form</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <h1>This is vishnu from Karnataka</h1>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        
-        <script src="" async defer></script>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>This Is Form</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>This is Entry Form</h1>
+    
+    <!-- Form to POST data to Flask route '/insert' -->
+    <form action="/insert" method="POST">
+        <span>Enter Your Name</span>&nbsp;
+        <input type="text" name="name" required><br><br>
+
+        <span>Enter Your Age</span>&nbsp;
+        <input type="text" name="age" maxlength="3" pattern="\d{1,3}" placeholder="Enter up to 3 digits" required><br><br>
+
+        <span>Enter Your Number</span>&nbsp;
+        <input type="text" name="phone" maxlength="10" pattern="\d{10}" placeholder="Enter Your Mobile Number" required><br><br>
+
+        <input type="submit" value="Save">
+    </form>
+    
+</body>
 </html>

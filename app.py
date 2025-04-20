@@ -1,11 +1,10 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy  # Required for SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
 app = Flask(__name__)
 
 # MySQL configuration with URL-encoded password
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:%23BJNVSreddy143@localhost:3306/vishnu'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://vishnu:%23BJNVSreddy143@localhost:3306/reddy'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -22,6 +21,15 @@ def check_db():
     except OperationalError as e:
         return f"Database connection failed! Error: {e}"
 
+# Define your model for the users table
+class login(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    age = db.Column(db.Integer)
+    number = db.Column(db.String(10))
+
+
+
 @app.route('/')
 def first():
     return "hello vishnu"
@@ -37,6 +45,24 @@ def third():
 @app.route('/fourth')
 def home():
     return render_template('index.html')  # Make sure this HTML file exists in the 'templates' folder
+
+
+@app.route('/insert', methods=['POST'])
+def inserts():
+    # Extract data from the form
+    name = request.form['name']
+    age = request.form['age']
+    phone = request.form['phone']
+
+    # Insert data into the database
+    new_user = login(name=name, age=age, number=phone)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return f"{name} {age} {phone}"  # ✅ Now this happens after insertion
+
+    # Return a success message
+    return f"User {name} with age {age} and phone {phone} added successfully!"
 
 if __name__ == '__main__':
     app.run(debug=True)
