@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy  # Required for SQLAlchemy
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Needed for flashing messages
 
 # MySQL configuration with URL-encoded password
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://vishnu:%23BJNVSreddy143@localhost:3306/reddy'
@@ -11,16 +12,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Initialize the database
 db = SQLAlchemy(app)
 
-# Test Route to check database connection
-@app.route('/check_db')
-def check_db():
-    try:
-        # Attempting to connect to the database
-        db.engine.connect()  # This is the correct way to check if the DB is reachable
-        return "Database is connected!"
-    except OperationalError as e:
-        return f"Database connection failed! Error: {e}"
-
 # Define your model for the users table
 class login(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -28,8 +19,16 @@ class login(db.Model):
     age = db.Column(db.Integer)
     number = db.Column(db.String(10))
 
+# Route to test DB connection
+@app.route('/check_db')
+def check_db():
+    try:
+        db.engine.connect()
+        return "✅ Database is connected!"
+    except OperationalError as e:
+        return f"❌ Database connection failed! Error: {e}"
 
-
+# Routes
 @app.route('/')
 def first():
     return "hello vishnu"
@@ -38,31 +37,44 @@ def first():
 def second():
     return 'this is second form'
 
-@app.route('/form_entry')
-def third():
-    return render_template('entry_form.html')  # Make sure this HTML file exists in the 'templates' folder
+@app.route('/form')
+def form():
+    return render_template('entry_form.html')
 
-@app.route('/fourth')
+@app.route('/home')
 def home():
-    return render_template('index.html')  # Make sure this HTML file exists in the 'templates' folder
+    return render_template('index.html')
 
+@app.route('/report')
+def reports():
+    return 'hello this is report'
 
 @app.route('/insert', methods=['POST'])
 def inserts():
-    # Extract data from the form
     name = request.form['name']
     age = request.form['age']
     phone = request.form['phone']
 
-    # Insert data into the database
+    if not name or not age or not phone:
+        flash("⚠️ All fields are required!", "error")
+        return redirect(url_for('form'))
+
     new_user = login(name=name, age=age, number=phone)
     db.session.add(new_user)
     db.session.commit()
 
-    return f"{name} {age} {phone}"  # ✅ Now this happens after insertion
+    flash(f"✅ User {name} added successfully!", "success")
+    return redirect(url_for('form'))
 
-    # Return a success message
-    return f"User {name} with age {age} and phone {phone} added successfully!"
+
+@app.route('/reports')
+def report():
+    users = login.query.filter(login.id == 10).all()
+    return render_template('reports.html', users=users)
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
